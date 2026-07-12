@@ -11,11 +11,12 @@
     "test": "node tests/run_tests.mjs && node tests/test_v040.mjs",
     "test:ui": "node tests/smoke_ui.mjs",
     "test:all": "node tests/run_tests.mjs && node tests/test_v040.mjs && node tests/smoke_ui.mjs",
+    "inflate:ui": "node scripts/inflate_ui.mjs",
     "desktop:dev": "tauri dev",
     "desktop:build": "tauri build",
     "desktop:build:windows": "tauri build --target x86_64-pc-windows-msvc",
     "desktop:icon": "tauri icon assets/playstore_icon_512.png",
-    "vendor:xlsx": "npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz && mkdir -p js/vendor && cp package/xlsx.mjs js/vendor/xlsx.mjs && cp package/dist/xlsx.full.min.js js/vendor/xlsx.full.min.js 2>/dev/null || true && rm -rf package xlsx-0.18.5.tgz && echo vendored"
+    "vendor:xlsx": "npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz && mkdir -p js/vendor && cp package/xlsx.mjs js/vendor/xlsx.mjs && rm -rf package xlsx-0.18.5.tgz && echo vendored"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.11.0",
