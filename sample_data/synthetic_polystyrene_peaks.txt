@@ -1,0 +1,2 @@
+# SYNTHETIC polystyrene-like peak list (cm-1) for the identification module
+3025, 2920, 1600, 1493, 1452, 756, 698

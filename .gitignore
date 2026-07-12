@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# OS files
+.DS_Store
+.DS_Store?
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build & test
+.cache/
+dist/
+build/
+.nyc_output/
+coverage/
+
+# Environment
+.env
+.env.local
+.env.*.local

@@ -1,0 +1,2 @@
+# SYNTHETIC ZnO-like peak list (cm-1) for the identification module
+3430, 1630, 1420, 450
