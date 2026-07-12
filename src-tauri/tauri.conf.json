@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "NanoSami",
+  "version": "0.3.0",
+  "identifier": "com.samiabdullah.nanosami",
+  "build": {
+    "frontendDist": "../www",
+    "devUrl": "http://localhost:8080",
+    "beforeDevCommand": "npm run build:web && python3 -m http.server 8080",
+    "beforeBuildCommand": "npm run build:web"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "NanoSami — Materials Science & Nanotechnology Toolkit",
+        "width": 1180,
+        "height": 780,
+        "minWidth": 820,
+        "minHeight": 560,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true,
+        "decorations": true,
+        "transparent": false,
+        "focus": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob:; worker-src 'self' blob:;"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Education",
+    "shortDescription": "FTIR, XRD & nanomaterials toolkit",
+    "longDescription": "NanoSami is an offline-first scientific toolkit for materials science and nanotechnology: FTIR peak dictionary & spectrum analyzer, material identification, Scherrer/Bragg XRD calculators, lab calculators, and a curated nanomaterials library. All processing stays on your device.",
+    "copyright": "Copyright (c) 2026 Sami Abdullah Mohammed",
+    "publisher": "Sami Abdullah Mohammed",
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "",
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false,
+        "startMenuFolder": "NanoSami"
+      }
+    }
+  },
+  "plugins": {}
+}
