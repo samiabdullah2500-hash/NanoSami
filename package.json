@@ -1,20 +1,22 @@
 {
   "name": "nanosami",
-  "version": "0.3.0",
-  "description": "NanoSami — Materials Science & Nanotechnology Toolkit. FTIR analysis, XRD calculators, lab calculators and a nanomaterials reference library. Offline-first; zero runtime dependencies.",
+  "version": "0.4.0",
+  "description": "NanoSami — Materials Science & Nanotechnology Toolkit. Data Studio, FTIR, XRD, calculators, library. Offline-first.",
   "author": "Sami Abdullah Mohammed",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8080",
     "build:web": "node scripts/build-web.mjs",
-    "test": "node tests/run_tests.mjs",
+    "test": "node tests/run_tests.mjs && node tests/test_v040.mjs",
     "test:ui": "node tests/smoke_ui.mjs",
-    "test:all": "node tests/run_tests.mjs && node tests/smoke_ui.mjs",
+    "test:all": "node tests/run_tests.mjs && node tests/test_v040.mjs && node tests/smoke_ui.mjs",
+    "inflate:ui": "node scripts/inflate_ui.mjs",
     "desktop:dev": "tauri dev",
     "desktop:build": "tauri build",
     "desktop:build:windows": "tauri build --target x86_64-pc-windows-msvc",
-    "desktop:icon": "tauri icon assets/playstore_icon_512.png"
+    "desktop:icon": "tauri icon assets/playstore_icon_512.png",
+    "vendor:xlsx": "npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz && mkdir -p js/vendor && cp package/xlsx.mjs js/vendor/xlsx.mjs && rm -rf package xlsx-0.18.5.tgz && echo vendored"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.11.0",

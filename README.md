@@ -1,13 +1,11 @@
 # NanoSami — Materials Science & Nanotechnology Toolkit
 
-**v0.3.0** · **Analyze. Calculate. Identify. Explore Nanomaterials.**
+**v0.4.0** · **Analyze. Calculate. Identify. Explore Nanomaterials.**
 
 Live web app: `https://samiabdullah2500-hash.github.io/NanoSami/`
 
 NanoSami is an offline-first scientific toolkit for students, researchers and laboratory
-users in materials science and nanotechnology. It combines FTIR interpretation tools,
-XRD calculators, laboratory calculators and a curated nanomaterials reference library
-in a single privacy-friendly application. All processing happens on your device.
+users in materials science and nanotechnology.
 
 Created by **Sami Abdullah Mohammed** (M.Sc. Physics — Nanoscience and Nanotechnology).
 
@@ -15,35 +13,20 @@ Created by **Sami Abdullah Mohammed** (M.Sc. Physics — Nanoscience and Nanotec
 
 ## Features
 
-**FTIR** — Peak dictionary, spectrum analyzer (CSV/TSV import, prominence peaks, transmittance dips), rule-based material identification (12 references, explainable scores).
+**Data & Plotting Studio** — XLSX/CSV/TSV/TXT import, sheet preview, X/Y mapping (multi-Y),
+multi-dataset plots, smoothing, baseline, normalization, peak detection with editable labels,
+PNG/CSV export, analysis recipes, optional AI context.
 
-**XRD** — Scherrer crystallite size (with optional instrumental correction) and Bragg d-spacing, with step-by-step working and honest caveats.
+**FTIR** — Peak dictionary, spectrum analyzer, rule-based material identification (algorithm v2).
 
-**Scientific calculators** — Molarity, dilution, wt%, at%, precursor mass, fuel:precursor ratio. Every equation and step shown.
+**XRD** — Scherrer/Bragg calculators + pattern peak table with d-spacing, FWHM, Scherrer sizes,
+and **hkl assignment only against explicit references** (never guessed).
 
-**Nanomaterials library** — 12 curated pages (ZnO, TiO₂, graphene, MXenes, …).
+**Scientific calculators** — Molarity, dilution, wt%, at%, precursor, fuel:precursor.
 
-**Android (Capacitor 6)** — See `docs/ANDROID.md`.
+**Nanomaterials library** — 12 curated reference pages.
 
-**Windows desktop (Tauri 2)** — True native Windows application: double-click installer → Start Menu icon → app opens. No terminal, no npm, no browser. See `docs/WINDOWS.md` and `docs/DESKTOP.md`.
-
----
-
-## Windows desktop (end user)
-
-1. Download `NanoSami_*_x64-setup.exe` from [GitHub Releases](https://github.com/samiabdullah2500-hash/NanoSami/releases).
-2. Double-click the installer.
-3. Launch **NanoSami** from the Start Menu.
-
-The installer is produced automatically by GitHub Actions (`.github/workflows/desktop-windows.yml`) or by building on a Windows machine:
-
-```powershell
-npm ci
-npm run build:web
-npm run desktop:build
-```
-
-**Technology choice:** Tauri (not Electron) — smaller binary (~5–15 MB), system WebView2, lower memory, better security. All scientific tools use the same offline web code.
+**Android (Capacitor 6)** · **Windows desktop (Tauri 2)** — see docs.
 
 ---
 
@@ -51,46 +34,41 @@ npm run desktop:build
 
 ```bash
 python3 -m http.server 8080   # open http://localhost:8080
-# or: npm start
+npm start
 ```
 
-Node.js ≥ 18 only needed for tests and desktop/Android packaging.
+For XLSX support:
+```bash
+npm run vendor:xlsx   # places js/vendor/xlsx.mjs
+```
 
-## Running the tests
+## Tests
 
 ```bash
 npm ci
-npm test          # 46 core unit tests
-npm run test:all  # + UI smoke tests
+npm test          # 46 core + 20 v0.4.0 tests
+npm run test:all  # + UI smoke (jsdom)
 ```
 
 ## Scientific limitations
 
-> Automated interpretations are preliminary. Verify with complementary techniques and expert analysis.
+> Automated interpretations are preliminary. Verify with complementary techniques.
 
 - A single FTIR peak is never definitive proof of a material.
-- Similarity scores are **not** probabilities.
-- Scherrer size ≠ particle size.
-- Full method: `docs/METHODOLOGY.md`. Provenance: `docs/SOURCES.md`.
+- hkl indices are assigned only from user-selected reference tables — never invented.
+- ALS baseline and geometric FWHM are educational approximations.
+- Full method: `docs/METHODOLOGY.md`, Data Studio: `docs/DATA_STUDIO.md`.
 
 ## Project structure
 
 ```
-index.html, css/, js/, data/, assets/, sample_data/
-scripts/build-web.mjs
-capacitor.config.json + android/     # Android
-src-tauri/                           # Windows desktop (Tauri 2)
-docs/WINDOWS.md, docs/DESKTOP.md, docs/ANDROID.md, …
-.github/workflows/                   # CI, Pages, Windows desktop build
+js/core/   pure scientific modules (import, processing, plot, xrd, recipe, ai_context, …)
+js/studio.js   Data Studio UI
+js/app.js      application shell + routes
+src-tauri/     Windows desktop (Tauri)
+android/       Capacitor Android
 ```
 
-## Roadmap
+## License
 
-- Williamson–Hall, lattice parameter, XRD indexing
-- Baseline correction / peak fitting
-- Expanded dictionary & reference sets
-- Signed Windows releases + portable .exe in Releases
-
-## Security & contributing
-
-`SECURITY.md`, `CONTRIBUTING.md`. License: **MIT**.
+**MIT** — see `LICENSE`.
