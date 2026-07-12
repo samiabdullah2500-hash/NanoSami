@@ -10,9 +10,14 @@
     "build:web": "node scripts/build-web.mjs",
     "test": "node tests/run_tests.mjs",
     "test:ui": "node tests/smoke_ui.mjs",
-    "test:all": "node tests/run_tests.mjs && node tests/smoke_ui.mjs"
+    "test:all": "node tests/run_tests.mjs && node tests/smoke_ui.mjs",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build",
+    "desktop:build:windows": "tauri build --target x86_64-pc-windows-msvc",
+    "desktop:icon": "tauri icon assets/playstore_icon_512.png"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.11.0",
     "jsdom": "^25.0.0"
   },
   "dependencies": {
