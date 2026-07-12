@@ -1,1 +1,31 @@
-PLACEHOLDER
+{
+  "name": "nanosami",
+  "version": "0.4.0",
+  "description": "NanoSami — Materials Science & Nanotechnology Toolkit. Data Studio, FTIR, XRD, calculators, library. Offline-first.",
+  "author": "Sami Abdullah Mohammed",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "build:web": "node scripts/build-web.mjs",
+    "test": "node tests/run_tests.mjs && node tests/test_v040.mjs",
+    "test:ui": "node tests/smoke_ui.mjs",
+    "test:all": "node tests/run_tests.mjs && node tests/test_v040.mjs && node tests/smoke_ui.mjs",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build",
+    "desktop:build:windows": "tauri build --target x86_64-pc-windows-msvc",
+    "desktop:icon": "tauri icon assets/playstore_icon_512.png",
+    "vendor:xlsx": "npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz && mkdir -p js/vendor && cp package/xlsx.mjs js/vendor/xlsx.mjs && cp package/dist/xlsx.full.min.js js/vendor/xlsx.full.min.js 2>/dev/null || true && rm -rf package xlsx-0.18.5.tgz && echo vendored"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.0",
+    "jsdom": "^25.0.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.1",
+    "@capacitor/cli": "^6.2.1",
+    "@capacitor/core": "^6.2.1",
+    "@capacitor/filesystem": "^6.0.4",
+    "@capacitor/share": "^6.0.4"
+  }
+}

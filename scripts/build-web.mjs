@@ -1,9 +1,7 @@
-/* Copies only the web application into www/ for Capacitor packaging.
- * Keeps the repo root (docs, tests, android project) out of the app bundle. */
-import { cpSync, rmSync, mkdirSync } from 'node:fs';
+import { cpSync, rmSync, mkdirSync, existsSync } from 'node:fs';
 rmSync('www', { recursive: true, force: true });
 mkdirSync('www');
 for (const p of ['index.html', 'css', 'js', 'data', 'assets', 'sample_data']) {
-  cpSync(p, `www/${p}`, { recursive: true });
+  if (existsSync(p)) cpSync(p, `www/${p}`, { recursive: true });
 }
-console.log('www/ built');
+console.log('www/ built (includes js/vendor for XLSX when present)');
