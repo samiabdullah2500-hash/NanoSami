@@ -1,6 +1,6 @@
 {
   "name": "nanosami",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "NanoSami — Materials Science & Nanotechnology Toolkit. FTIR analysis, XRD calculators, lab calculators and a nanomaterials reference library. Offline-first; zero runtime dependencies.",
   "author": "Sami Abdullah Mohammed",
   "license": "MIT",
@@ -8,9 +8,9 @@
   "scripts": {
     "start": "python3 -m http.server 8080",
     "build:web": "node scripts/build-web.mjs",
-    "test": "node tests/run_tests.mjs",
+    "test": "node tests/run_tests.mjs && node tests/run_tests_v04.mjs",
     "test:ui": "node tests/smoke_ui.mjs",
-    "test:all": "node tests/run_tests.mjs && node tests/smoke_ui.mjs",
+    "test:all": "node tests/run_tests.mjs && node tests/run_tests_v04.mjs && node tests/smoke_ui.mjs",
     "desktop:dev": "tauri dev",
     "desktop:build": "tauri build",
     "desktop:build:windows": "tauri build --target x86_64-pc-windows-msvc",
@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.11.0",
-    "jsdom": "^25.0.0"
+    "jsdom": "^25.0.0",
+    "xlsx": "^0.18.5"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.1",

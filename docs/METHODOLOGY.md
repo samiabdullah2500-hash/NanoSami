@@ -87,3 +87,78 @@ documented rather than hidden.
   shifts are only partially covered by the tolerance setting.
 - FTIR alone cannot definitively identify unknown materials. Every identification
   output repeats this.
+
+---
+
+# v0.4.0 additions — Studios, import pipeline, Miller matching
+
+## 7. Universal import pipeline (`js/core/dataio.js`)
+
+- CSV / TSV / TXT: delimiter auto-detected (comma, semicolon, tab, whitespace)
+  by column-count consistency; decimal commas handled when the delimiter is not
+  a comma. XLSX/XLS: read via vendored SheetJS 0.18.5 (`js/vendor/`, Apache-2.0,
+  byte-identical to the npm `xlsx@0.18.5` dist file); each sheet becomes a grid
+  and the user picks the sheet.
+- Header detection is reported with a confidence level (**certain / likely /
+  ambiguous**) based on the numeric fraction of the first row vs the rows below.
+  When ambiguous, the app warns and the user confirms; import never silently
+  guesses X/Y roles — the mapping UI always shows a preview and requires
+  explicit confirmation.
+- Missing/invalid cells: rows with a non-numeric X are dropped; non-numeric Y
+  values become gaps; counts of dropped/invalid values are reported as warnings.
+  Duplicate X values are averaged; data are sorted by X.
+
+## 8. Processing steps (`js/core/processing.js`)
+
+Applied non-destructively in a fixed, documented order:
+smoothing → baseline → normalization → stack offset.
+
+- **Moving average** (odd window) and **Savitzky–Golay** (least-squares
+  polynomial convolution; warns when X spacing is non-uniform, since SG assumes
+  uniform sampling).
+- **Baseline:** *linear* (line through the mean of the first/last edge points)
+  and *rolling minimum* (windowed minimum followed by a smoothing pass) —
+  simple, explainable estimators, not asymmetric-least-squares fits; the
+  description of the applied step is recorded in the Analysis Recipe.
+- **Normalization:** max = 1, area = 1 (trapezoidal), or min–max 0–1.
+
+## 9. Generic peak detection (`js/core/peaks.js`)
+
+Local maxima filtered by **prominence** (fraction of the data span) and a
+minimum X separation. **FWHM is measured at half-prominence** by linear
+interpolation of the crossing points (the scipy `peak_widths` convention),
+which stays finite for overlapping peaks; the UI labels these as numerical
+estimates, not profile fits.
+
+## 10. XRD Studio and Miller-index matching (`js/core/xrd_match.js`)
+
+- Per-peak d-spacing (Bragg, n = 1) and Scherrer size (Section 5) from the
+  detected 2θ and FWHM.
+- **(hkl) labels are never guessed from peak position alone.** Two modes:
+  - **A — user-provided reference list** (2θ or d values with hkl), e.g. from an
+    ICDD/COD card or publication the user has access to; the reference name is
+    recorded and displayed.
+  - **C — computed reflections** from a user-selected crystal system (cubic,
+    tetragonal, orthorhombic, hexagonal) and lattice parameters using the
+    standard 1/d² formulas. Only geometrically allowed lines are generated;
+    space-group extinctions and intensities are **not** applied and the UI says
+    so — agreement is a consistency check with the assumed structure, not
+    phase identification.
+- Matching is greedy one-to-one nearest-Δ2θ within a user tolerance; each row
+  shows observed 2θ, reference 2θ, Δ2θ, (hkl) and a match status, plus the
+  assumptions used. No built-in reference database ships with v0.4.0 —
+  fabricating one without licensed provenance was rejected deliberately.
+
+## 11. Reproducibility (Analysis Recipe, `js/core/recipe.js`)
+
+Exportable JSON recording source-file metadata, selected sheet, X/Y column
+mapping, every applied processing step with parameters, peak-detection and
+calculation settings, the Miller reference used, key results, the app version
+and a timestamp — enough to reproduce the analysis by hand or in a future
+recipe-replay feature.
+
+## 12. AI assistance boundaries
+
+See `docs/AI.md`. Deterministic code computes everything; the AI layer only
+explains a labelled context and its output is always marked as AI-generated
+and unverified.
