@@ -1,28 +1,33 @@
 # Dependencies
 node_modules/
-package-lock.json
 
-# OS files
+# Capacitor web build output
+www/
+
+# Android / Gradle generated (keep source skeleton)
+android/.gradle/
+android/**/build/
+android/local.properties
+android/captures/
+android/.idea/
+*.iml
+*.apk
+*.aab
+*.keystore
+*.jks
+android/app/src/main/assets/public/
+
+# OS / editor
 .DS_Store
-.DS_Store?
+Thumbs.db
 *.swp
 *.swo
-*~
-
-# IDE
-.vscode/
 .idea/
-*.sublime-project
-*.sublime-workspace
+.vscode/
+*.log
 
-# Build & test
-.cache/
-dist/
-build/
-.nyc_output/
-coverage/
-
-# Environment
+# Secrets (never commit)
 .env
-.env.local
-.env.*.local
+.env.*
+google-services.json
+**/secrets/
