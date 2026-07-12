@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.3.0] — Android platform (unpublished; no APK/AAB built yet)
+
+### Added
+- Complete Capacitor Android project skeleton (`android/`): appId com.samiabdullah.nanosami,
+  app name NanoSami, versionCode 3 / versionName 0.3.0; brand-only launcher icons
+  (regular, round, adaptive).
+- Platform-aware export: on Android, exports write to the app cache and open the
+  system share sheet via @capacitor/filesystem + @capacitor/share (Blob downloads
+  fail silently in Android WebViews); browsers keep the normal download.
+- `npm run build:web` produces the packaged `www/` bundle; docs/ANDROID.md documents
+  the exact build steps and what was/wasn't verified.
+- viewport-fit=cover, plot re-render on rotation/resize, file picker MIME types.
+
+### Honest status
+- The environment cannot reach the Gradle/Android SDK download servers, so the
+  project compiles only on a machine with Android tooling; no APK/AAB was produced
+  here and none is claimed.
+
+
 ## [0.2.0] — scientific & quality upgrade (unpublished)
 
 ### Fixed (critical)
@@ -38,19 +57,9 @@
 
 ### Added
 - FTIR peak dictionary (~50 curated bands) with exact/range/possible match classes
-- FTIR spectrum analyzer: CSV/TSV/paste import, validation, absorbance/transmittance
-  handling, standard reversed-axis plotting, prominence-based peak detection with
-  adjustable sensitivity and minimum separation, peak table with preliminary assignments
-- Explainable rule-based material identification (12 reference materials,
-  ±5/±10/±20 cm⁻¹ tolerance, documented weighted scoring with unexplained-peak penalty)
-- XRD Scherrer crystallite-size and Bragg d-spacing calculators with step-by-step
-  working, anode wavelength presets and scientific caveats
-- Scientific calculators: molarity, solute mass, dilution, wt%, at%, precursor mass,
-  fuel:precursor ratio — all with visible equations and steps
-- Nanomaterials reference library (12 materials)
-- About page with creator section, privacy statement and scientific disclaimer
-- Light/dark theme, responsive layout (sidebar / mobile bottom bar)
-- 32 unit tests; synthetic sample datasets (clearly labeled synthetic)
-
-### Notes
-- No published builds yet; Android packaging is planned via Capacitor (see docs/RELEASE.md)
+- Spectrum analyzer (CSV/TSV/paste, auto mode detect, prominence peaks)
+- Material identification against 12 reference materials
+- XRD Scherrer + Bragg calculators with steps
+- Lab calculators (molarity, dilution, wt%, at%, precursor, fuel ratio)
+- Nanomaterials library (12 entries)
+- Zero runtime dependencies, offline-first, privacy-first design

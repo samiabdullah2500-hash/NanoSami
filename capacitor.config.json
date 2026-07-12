@@ -1,0 +1,11 @@
+{
+  "appId": "com.samiabdullah.nanosami",
+  "appName": "NanoSami",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -11,8 +11,22 @@ import MATERIALS from '../data/materials_ftir.js';
 import LIBRARY from '../data/nanomaterials.js';
 
 const $ = (sel, el = document) => el.querySelector(sel);
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-function download(filename, text, type = 'text/plain') {
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&', '<': '<', '>': '>', '"': '"' }[c]));
+/* Platform-aware export.
+ * Browser: normal Blob download. Android (Capacitor): Blob downloads fail
+ * silently in WebViews, so we write to the app cache and open the system
+ * share sheet instead (user can save to Files, Drive, email, etc.). */
+async function download(filename, text, type = 'text/plain') {
+  const cap = window.Capacitor;
+  if (cap && cap.isNativePlatform && cap.isNativePlatform()) {
+    try {
+      const res = await cap.Plugins.Filesystem.writeFile({
+        path: filename, data: text, directory: 'CACHE', encoding: 'utf8',
+      });
+      await cap.Plugins.Share.share({ title: filename, url: res.uri });
+      return;
+    } catch (e) { console.warn('Native share failed, falling back', e); }
+  }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([text], { type }));
   a.download = filename;
@@ -28,6 +42,7 @@ const state = {
   sensitivity: 0.5,
   minDistance: 12,
   tolerance: 10,
+  replot: null,
 };
 
 /* ---------------- theme ---------------- */
@@ -132,7 +147,7 @@ const pages = {};
 pages.home = () => {
   $('#main').innerHTML = `
     <section class="card hero">
-      <div class="hero-tag">NANOSAMI · MATERIALS SCIENCE &amp; NANOTECHNOLOGY TOOLKIT</div>
+      <div class="hero-tag">NANOSAMI · MATERIALS SCIENCE & NANOTECHNOLOGY TOOLKIT</div>
       <h1>Analyze. Calculate. Identify.<br>Explore nanomaterials.</h1>
       <p class="lede">FTIR interpretation, XRD calculations, laboratory calculators and a curated nanomaterials
       reference — running entirely on your device.</p>
@@ -152,7 +167,7 @@ pages.home = () => {
     <p class="footnote">${DISCLAIMER}</p>`;
   const c = $('#hero-plot');
   const draw = () => { const s = heroSpectrum(); plotSpectrum(c, s.x, s.y, { mode: 'absorbance' }); };
-  draw(); addEventListener('resize', draw, { once: true });
+  draw(); state.replot = draw;
 };
 
 /* ---------------- FTIR ---------------- */
@@ -215,7 +230,7 @@ function ftirAnalyzer(el) {
       (CSV, TSV, semicolon or space separated; a header row is optional). Data are processed
       entirely in your browser and never uploaded.</p>
       <div class="row">
-        <div><label for="sp-file">Import file (.csv / .txt / .tsv)</label><input id="sp-file" type="file" accept=".csv,.txt,.tsv,.dat"></div>
+        <div><label for="sp-file">Import file (.csv / .txt / .tsv)</label><input id="sp-file" type="file" accept=".csv,.txt,.tsv,.dat,text/csv,text/plain"></div>
         <div><label for="sp-mode">Y-axis mode</label>
           <select id="sp-mode"><option value="auto" selected>Auto-detect</option><option value="absorbance">Absorbance</option><option value="transmittance">Transmittance</option></select></div>
       </div>
@@ -226,7 +241,7 @@ function ftirAnalyzer(el) {
       <div id="sp-warn" aria-live="polite"></div>
     </section>
     <section class="card ${state.spectrum ? '' : 'hide'}" id="sp-panel">
-      <h2>Spectrum &amp; peaks</h2>
+      <h2>Spectrum & peaks</h2>
       <div class="plot-wrap"><canvas id="sp-plot"></canvas></div>
       <div class="row" style="margin-top:.8rem">
         <div><label for="sp-sens">Peak sensitivity: <span id="sp-sens-v" class="mono"></span></label>
@@ -267,6 +282,7 @@ function ftirAnalyzer(el) {
     const { x, y, mode } = state.spectrum;
     state.peaks = detectPeaks(x, y, { mode, sensitivity: state.sensitivity, minDistance: state.minDistance });
     plotSpectrum($('#sp-plot'), x, y, { peaks: state.peaks, mode });
+    state.replot = () => plotSpectrum($('#sp-plot'), x, y, { peaks: state.peaks, mode });
     const dict = (w) => {
       const r = lookupWavenumber(FTIR_DICT, w, { tolerance: 10 })[0];
       return r ? `${r.bond} — ${r.group} <span class="badge ${r.matchType}">${r.matchType}</span>` : '<span class="footnote">no dictionary match</span>';
@@ -282,7 +298,7 @@ function ftirAnalyzer(el) {
   }
   $('#sp-peaks').addEventListener('click', (e) => {
     if (!state.spectrum || !state.peaks.length) return;
-    const params = { mode: state.spectrum.mode, sensitivity: state.sensitivity, minDistance: state.minDistance, algorithmVersion: ALGORITHM_VERSION, app: 'NanoSami 0.2.0', exported: new Date().toISOString() };
+    const params = { mode: state.spectrum.mode, sensitivity: state.sensitivity, minDistance: state.minDistance, algorithmVersion: ALGORITHM_VERSION, app: 'NanoSami 0.3.0', exported: new Date().toISOString() };
     if (e.target.id === 'sp-export-csv') {
       download('nanosami_peaks.csv',
         `# NanoSami detected peaks — preliminary, unconfirmed\n# ${JSON.stringify(params)}\nwavenumber_cm-1,${state.spectrum.mode},prominence\n` +
@@ -485,10 +501,10 @@ pages.about = () => {
   $('#main').innerHTML = `
     <h1>About NanoSami</h1>
     <section class="card">
-      <p><strong>NanoSami — Materials Science &amp; Nanotechnology Toolkit</strong> brings FTIR interpretation,
+      <p><strong>NanoSami — Materials Science & Nanotechnology Toolkit</strong> brings FTIR interpretation,
       XRD calculations, laboratory calculators and a curated nanomaterials reference together in one
       offline-first application for students and researchers.</p>
-      <p class="mono footnote">Version 0.2.0 · open scientific tooling · all processing on-device</p>
+      <p class="mono footnote">Version 0.3.0 · open scientific tooling · all processing on-device</p>
     </section>
     <section class="card">
       <h2>About the creator</h2>
@@ -528,5 +544,10 @@ function route() {
   page(query);
   $('#main').scrollIntoView?.();
 }
+let resizeTimer;
+addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => state.replot?.(), 180);
+});
 addEventListener('hashchange', route);
 route();
