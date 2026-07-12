@@ -9,6 +9,8 @@ import { lookupWavenumber, matchMaterials, ALGORITHM_VERSION } from './core/matc
 import FTIR_DICT from '../data/ftir_peaks.js';
 import MATERIALS from '../data/materials_ftir.js';
 import LIBRARY from '../data/nanomaterials.js';
+import { plotStudioPage } from './ui/plot_studio.js';
+import { xrdStudioPage } from './ui/xrd_studio.js';
 
 const $ = (sel, el = document) => el.querySelector(sel);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&', '<': '<', '>': '>', '"': '"' }[c]));
@@ -60,7 +62,9 @@ themeBtn.addEventListener('click', () => { theme = theme === 'dark' ? 'light' : 
 const ROUTES = [
   { hash: '#/home', label: 'Home', glyph: '⌂' },
   { hash: '#/ftir', label: 'FTIR', glyph: 'ν̃' },
-  { hash: '#/xrd', label: 'XRD', glyph: '2θ' },
+  { hash: '#/plot', label: 'Plotting', glyph: '∿' },
+  { hash: '#/xrdstudio', label: 'XRD Studio', glyph: '⌖' },
+  { hash: '#/xrd', label: 'XRD calc', glyph: '2θ' },
   { hash: '#/calc', label: 'Calculators', glyph: 'Σ' },
   { hash: '#/library', label: 'Library', glyph: '▤' },
   { hash: '#/about', label: 'About', glyph: 'ⓘ' },
@@ -159,6 +163,8 @@ pages.home = () => {
         ['#/ftir?tab=analyzer', 'FTIR·02', 'Analyze FTIR Spectrum', 'Import CSV or paste data, detect peaks, plot in standard convention.'],
         ['#/ftir?tab=dictionary', 'FTIR·01', 'Search FTIR Peak', 'Look up a wavenumber against a curated band dictionary.'],
         ['#/ftir?tab=identify', 'FTIR·03', 'Identify Possible Material', 'Rule-based, explainable matching against reference peak sets.'],
+        ['#/plot', 'PLOT·∿', 'Plotting Studio', 'Import XLSX/CSV, map columns, overlay samples, smooth, baseline-correct, detect peaks, export SVG/PNG.'],
+        ['#/xrdstudio', 'XRD·⌖', 'XRD Studio', 'Full pattern workflow: peaks, FWHM, d-spacing, Scherrer sizes and reference-based Miller indexing.'],
         ['#/xrd', 'XRD·01', 'Calculate Crystallite Size', 'Scherrer equation with unit handling and caveats.'],
         ['#/calc', 'LAB·Σ', 'Scientific Calculators', 'Molarity, dilution, wt%, at%, precursor and fuel ratios.'],
         ['#/library', 'REF·▤', 'Explore Nanomaterials', 'Curated reference pages: ZnO, TiO₂, graphene, MXenes and more.'],
@@ -298,7 +304,7 @@ function ftirAnalyzer(el) {
   }
   $('#sp-peaks').addEventListener('click', (e) => {
     if (!state.spectrum || !state.peaks.length) return;
-    const params = { mode: state.spectrum.mode, sensitivity: state.sensitivity, minDistance: state.minDistance, algorithmVersion: ALGORITHM_VERSION, app: 'NanoSami 0.3.0', exported: new Date().toISOString() };
+    const params = { mode: state.spectrum.mode, sensitivity: state.sensitivity, minDistance: state.minDistance, algorithmVersion: ALGORITHM_VERSION, app: 'NanoSami 0.4.0', exported: new Date().toISOString() };
     if (e.target.id === 'sp-export-csv') {
       download('nanosami_peaks.csv',
         `# NanoSami detected peaks — preliminary, unconfirmed\n# ${JSON.stringify(params)}\nwavenumber_cm-1,${state.spectrum.mode},prominence\n` +
@@ -367,6 +373,7 @@ pages.xrd = () => {
   const wlOpts = Object.entries(WAVELENGTHS).map(([k, v]) => `<option value="${v}">${k}</option>`).join('');
   $('#main').innerHTML = `
     <h1>XRD calculators</h1>
+    <div class="notice info">New in v0.4: the <a href="#/xrdstudio">XRD Studio</a> analyzes a full pattern — automatic peaks, FWHM, d-spacings, Scherrer sizes and Miller-index matching.</div>
     <section class="card">
       <h2>Scherrer crystallite size</h2>
       <p class="mono footnote">D = K·λ / (β·cos θ) — β is the FWHM in radians on the 2θ scale; θ = 2θ/2.</p>
@@ -504,7 +511,7 @@ pages.about = () => {
       <p><strong>NanoSami — Materials Science & Nanotechnology Toolkit</strong> brings FTIR interpretation,
       XRD calculations, laboratory calculators and a curated nanomaterials reference together in one
       offline-first application for students and researchers.</p>
-      <p class="mono footnote">Version 0.3.0 · open scientific tooling · all processing on-device</p>
+      <p class="mono footnote">Version 0.4.0 · open scientific tooling · all processing on-device</p>
     </section>
     <section class="card">
       <h2>About the creator</h2>
@@ -534,6 +541,10 @@ pages.about = () => {
       or expert interpretation.</p>
     </section>`;
 };
+
+/* ---------------- v0.4 studios ---------------- */
+pages.plot = () => plotStudioPage();
+pages.xrdstudio = () => xrdStudioPage();
 
 /* ---------------- router ---------------- */
 function route() {

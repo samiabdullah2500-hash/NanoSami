@@ -1,6 +1,6 @@
 # NanoSami — Materials Science & Nanotechnology Toolkit
 
-**v0.3.0** · **Analyze. Calculate. Identify. Explore Nanomaterials.**
+**v0.4.0** · **Analyze. Calculate. Identify. Explore Nanomaterials.**
 
 Live web app: `https://samiabdullah2500-hash.github.io/NanoSami/`
 
@@ -16,6 +16,12 @@ Created by **Sami Abdullah Mohammed** (M.Sc. Physics — Nanoscience and Nanotec
 ## Features
 
 **FTIR** — Peak dictionary, spectrum analyzer (CSV/TSV import, prominence peaks, transmittance dips), rule-based material identification (12 references, explainable scores).
+
+**Plotting Studio (new in 0.4)** — Import XLSX/XLS/CSV/TSV/TXT with sheet selection, preview and explicit X/Y column mapping; overlay multiple samples; normalize, smooth (moving average / Savitzky–Golay), baseline-correct, stack, detect and label peaks; export SVG/PNG figures, processed CSV and a reproducible Analysis Recipe (JSON).
+
+**XRD Studio (new in 0.4)** — Full pattern workflow: adjustable peak detection, per-peak FWHM, d-spacing and Scherrer size, plus Miller-index matching against a user-provided reference list or reflections computed from your lattice parameters. Shows observed 2θ, reference 2θ, Δ2θ, (hkl), status and every assumption — never claims phase identification.
+
+**AI assistance (optional, new in 0.4)** — NanoSami computes everything deterministically; the AI layer only explains. Copy a structured, origin-labelled context or open ChatGPT/Claude/Gemini/Grok, or bring your own API key (consent-gated, local-only storage, deletable). Fully functional offline with AI unused. See `docs/AI.md`.
 
 **XRD** — Scherrer crystallite size (with optional instrumental correction) and Bragg d-spacing, with step-by-step working and honest caveats.
 
@@ -60,7 +66,7 @@ Node.js ≥ 18 only needed for tests and desktop/Android packaging.
 
 ```bash
 npm ci
-npm test          # 46 core unit tests
+npm test          # 91 unit tests (core + v0.4 studios)
 npm run test:all  # + UI smoke tests
 ```
 
@@ -86,8 +92,11 @@ docs/WINDOWS.md, docs/DESKTOP.md, docs/ANDROID.md, …
 
 ## Roadmap
 
-- Williamson–Hall, lattice parameter, XRD indexing
-- Baseline correction / peak fitting
+- Williamson–Hall analysis, lattice-parameter refinement, multi-phase workflows
+- Profile fitting (current FWHM values are numerical half-prominence estimates)
+- Further characterization modules on the shared import/plot infrastructure (UV–Vis/Tauc, Raman, PL, TGA/DSC, …)
+- Recipe replay (re-apply an exported Analysis Recipe automatically)
+- OS-keychain storage for desktop API keys
 - Expanded dictionary & reference sets
 - Signed Windows releases + portable .exe in Releases
 
